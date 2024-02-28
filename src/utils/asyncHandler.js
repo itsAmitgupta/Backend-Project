@@ -10,20 +10,6 @@ const asyncHandler = (reqeustHandler) =>{
 export {asyncHandler}
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 // second method
 // const asyncHandler = (fn) => async (req,res,next) =>{
 //     try {
