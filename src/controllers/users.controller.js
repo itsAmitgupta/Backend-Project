@@ -6,14 +6,14 @@ import { uploadOnCloudinary } from "../utils/cloudinary.js"
 
 const generateAccessAndRefreshToken = async(userId) =>{
     try {
-        const user = User.findById(userId)
-        const refreshToken = user.generateRefreshToken()
+        const user = await User.findById(userId)
         const accessToken = user.generateAccessToken()
+        const refreshToken = user.generateRefreshToken()
 
         user.refreshToken = refreshToken
          await user.save({validateBeforeSave:false})
 
-         return {refreshToken,accessToken}
+         return {accessToken,refreshToken}
     } catch (error) {
         throw new ApiError(500,"Something went wrong while generating the Refresh and Access Token")
     }
@@ -107,9 +107,11 @@ const loginUser = asyncHandler(
         //step 6 send cookies
 
         const {username,email,password} = req.body
+        console.log(email)
 
-        if(!username || !email){
-            throw new ApiError(400,"username or password is required")
+        // if(!username || !email){
+            if(!username && !email){
+            throw new ApiError(400,"username or email is required")
         }
 
         const user = await User.findOne({
@@ -125,7 +127,7 @@ const loginUser = asyncHandler(
       if(!isPasswordValid){
         throw new ApiError(401,"invalid user credentials")
       }
-      const {refreshToken,accessToken} = await generateAccessAndRefreshToken(user._id)
+      const {accessToken,refreshToken} = await generateAccessAndRefreshToken(user._id)
       
       const loggedInUser = await User.findById(user._id).select("-password -refreshToken")
       
@@ -141,8 +143,9 @@ const loginUser = asyncHandler(
         new ApiResponse(200,
             {
                 user:loggedInUser,accessToken,refreshToken
-            }),
+            },
             "user login successfully"
+            )
       )
     }
 )
