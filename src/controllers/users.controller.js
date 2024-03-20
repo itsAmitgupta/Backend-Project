@@ -452,7 +452,7 @@ export {
   registerUser,
   loginUser,
   logoutUser,
-  refreshAccessToken,
+  refreshAccessToken, 
   changePassword,
   getCurrentUser,
   updateAccountDetails,
